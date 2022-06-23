@@ -1,0 +1,21 @@
+#b1
+{
+    position: relative;
+    left: 80%;
+}
+
+
+#v-pills-tabContent{
+height:600px;
+background-color: rgb(228, 228, 230);
+width:800px;
+}
+
+.task_name,.time{
+    display: inline-block;
+
+}
+.task_completed
+{
+    text-decoration: line-through;
+}
