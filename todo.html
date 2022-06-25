@@ -92,14 +92,15 @@
             </div>
             <div class="modal-body">
               <label for="taskname"></label>
-              <input id="taskname" type="text" required />
+              <input id="taskname" type="text"/>
               <br />
               <br />
               <input
                 type="datetime-local"
+                onload="timeset()"
                 id="time"
                 name="time"
-                min="2018-06-07T00:00"
+                //min="Date.now()"
                 max="2024-06-14T00:00"
               />
             </div>

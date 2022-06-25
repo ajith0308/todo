@@ -1,3 +1,6 @@
+var apiurl = "https://todoapp-730b4-default-rtdb.firebaseio.com/main.json";
+var apigeturl = "https://todoapp-730b4-default-rtdb.firebaseio.com/main/";
+
 //insert into firebase
 async function inserttofirebase(tasklist) {
   var raw = JSON.stringify(tasklist);
@@ -6,12 +9,8 @@ async function inserttofirebase(tasklist) {
     body: raw,
   };
 
-  let response = await fetch(
-    "https://todoapp-730b4-default-rtdb.firebaseio.com/main.json",
-    requestOptions
-  );
+  let response = await fetch(apiurl, requestOptions);
   let data = await response.json();
-  //console.log(data);
   return data;
 }
 //insert into completed list
@@ -26,33 +25,37 @@ function completedlist(e) {
   ).innerHTML += `<div id='${parentElementID}' class="completed">
   <div class="task_completed" >${title.textContent}</div>
   <div class="time">${time.textContent}</div>
+   <input type="checkbox" onclick="redolist(this)">
 </div>`;
 
   e.parentElement.remove();
 }
 //insert into Tasklist
-function addTask() {
-  let responsevalue;
+async function addTask() {
   let title = document.querySelector("#taskname").value;
   let time = document.querySelector("#time").value;
-  let response = inserttofirebase({
-    title: title,
-    datetime: time,
-    status: "Not Completed",
-  });
+  console.log(typeof title);
+  if (title.length !== 0) {
+    let response = inserttofirebase({
+      title: title,
+      datetime: time,
+      status: "Not Completed",
+    });
 
-  response.then((responseResult) => {
-    responsevalue = responseResult.name;
-  });
-  //   console.log("this is" + title);
-  document.querySelector(
-    "#v-pills-home"
-  ).innerHTML += `<div id='${responsevalue}'>
+    let result = await response;
+    let name = result.name;
+    //   console.log("this is" + title);
+    document.querySelector("#v-pills-home").innerHTML += `<div id='${name}'>
   <div class="task_name" >${title}</div>
   <div class="time">${time}</div>
   <input type="checkbox" onclick="completedlist(this)">
 </div>`;
-  document.querySelector("#addtask").setAttribute("data-bs-dismiss", "modal");
+    document.querySelector("#addtask").setAttribute("data-bs-dismiss", "modal");
+  } else {
+    alert("Title is requered");
+  }
+  document.querySelector("#time").value = "";
+  document.querySelector("#taskname").value = "";
 }
 
 //get data form firebase
@@ -61,10 +64,7 @@ function firebasefetch() {
     method: "GET",
   };
 
-  fetch(
-    "https://todoapp-730b4-default-rtdb.firebaseio.com/main.json",
-    requestOptions
-  )
+  fetch(apiurl, requestOptions)
     .then((response) => response.json())
     .then((result) => {
       for (let key in result) {
@@ -82,6 +82,7 @@ function firebasefetch() {
           ).innerHTML += `<div id='${key}'>
   <div class="task_completed">${result[key].title}</div>
   <div class="time">${result[key].datetime}</div>
+  <input type="checkbox" onclick="redolist(this)">
 </div>`;
         }
       }
@@ -98,11 +99,15 @@ function firebaseupdate(parentElementID) {
     body: raw,
   };
 
-  fetch(
-    `https://todoapp-730b4-default-rtdb.firebaseio.com/main/${parentElementID}.json`,
-    requestOptions
-  )
+  fetch(`${apigeturl}${parentElementID}.json`, requestOptions)
     .then((response) => response.json())
     .then((result) => console.log(result))
     .catch((error) => console.log("error", error));
+}
+
+function redolist() {}
+
+function timeset() {
+  let date = Date.now();
+  document.querySelector("#time").setAttribute("min", `${date}`);
 }
