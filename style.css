@@ -19,3 +19,8 @@ width:800px;
 {
     text-decoration: line-through;
 }
+
+.task
+{
+    background-color: aquamarine;
+}
